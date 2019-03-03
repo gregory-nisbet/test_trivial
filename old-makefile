@@ -1,0 +1,61 @@
+.if 0 && $(error This is a bmake makefile. Not a GNU Make makefile)
+.endif
+
+.if ${.CURDIR} == ${.OBJDIR}
+.error "must have object directory! please run `mkdir obj'."
+.endif
+
+CXXFLAGS = -std=c++17 -Wall -Werror -Wextra -pedantic -g -fsanitize=address -Wshadow  -Wno-format-nonliteral
+CFLAGS   = -std=c11   -Wall -Werror -Wextra -pedantic -g -fsanitize=address -Wshadow  -Wno-format-nonliteral
+
+INCLUDES        != find ${.CURDIR}/include -type f -name '*.h'
+INCLUDE_DIRS    != find ${.CURDIR}/include -type d
+TESTS_SRCS_CXX  != find ${.CURDIR}/t       -type f -name '*.cpp'
+TESTS_SRCS_C    != find ${.CURDIR}/t       -type f -name '*.c'
+
+# .info ${TESTS_SRCS_CXX}
+# .info ${TESTS_SRCS_C}
+
+INCLUDE_FLAGS := ${INCLUDE_DIRS:S/^/-I /}
+RUNNABLE_TESTS :=
+
+.for test in ${TESTS_SRCS_CXX}
+OUT := ${test:R:=.t}
+# if you replace this with += you get a bug. wowzers
+# RUNNABLE_TESTS += ${OUT}
+RUNNABLE_TESTS := ${RUNNABLE_TESTS} ${OUT}
+# .info ${RUNNABLE_TESTS}
+
+.NOTMAIN: ${OUT}
+${OUT} : ${test} ${INCLUDES}
+	${CXX} -o ${.TARGET} ${test} ${CXXFLAGS} ${INCLUDE_FLAGS}
+.endfor
+
+.for test_c in ${TESTS_SRCS_C}
+OUT := ${test_c:R:=.t}
+# RUNNABLE_TESTS += ${OUT}
+RUNNABLE_TESTS := ${RUNNABLE_TESTS} ${OUT}
+# .info ${RUNNABLE_TESTS}
+
+.NOTMAIN: ${OUT}
+${OUT} : ${test_c} ${INCLUDES}
+	${CC} -o ${.TARGET} ${test_c} ${CFLAGS} ${INCLUDE_FLAGS}
+.endfor
+
+# .info ${RUNNABLE_TESTS}
+
+.PHONY: all
+all: ${RUNNABLE_TESTS}
+
+.PHONY: test
+test: ${RUNNABLE_TESTS}
+	@cd ${.CURDIR} && prove
+
+.PHONY: format
+format: ${INCLUDES} ${TESTS_SRCS}
+	clang-format -i --style=WebKit ${.ALLSRC}
+
+.PHONY: clean
+clean:
+	@cd ${.CURDIR} && rm -f ${RUNNABLE_TESTS}
+	@cd ${.CURDIR} && cd t && rm -rf ./*.dSYM
