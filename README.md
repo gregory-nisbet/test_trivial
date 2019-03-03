@@ -53,11 +53,11 @@ when compiling as C.
 
 `TTR_FALSE_2` is just like `TTR_FALSE_1` except that it requires an explicit name as its first argument.
 
-`TTR_CSTR_EQ_3 : cstr! * cstr! * cstr! -> bool`
+`TTR_CSTR_EQ_3 : cstr! * cstr! * cstr! -> void`
 
 `TTR_CSTR_EQ_3` takes a name of the test, a left argument, and a right argument. It checks whether the left and right argument
 are both not null pointers and that their contents are equal to each other.
 
-`TTR_CSTR_EQ_2 : cstr! * cstr! -> bool`
+`TTR_CSTR_EQ_2 : cstr! * cstr! -> void`
 
 `TTR_CSTR_EQ_2` is like `TTR_CSTR_EQ_3` but without the explicit name.
