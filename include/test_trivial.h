@@ -140,7 +140,6 @@ static inline ttr_error ttr_ok_impl(const char* name, TEST_TRIVIAL_BOOL val, con
     }
 }
 
-
 // TODO: optimization when both strings point at the same thing
 // I don't think it's correct to skip the check entirely because then that could mask problems
 // if left and right are not actually C strings

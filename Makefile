@@ -1,9 +1,7 @@
-CLANGXX := clang++
-CLANG   := clang
-GCCXX   := g++-8
-GCC     := gcc-8
+PROJ  := $(PWD)
+TESTS := $(PROJ)/tests
 
-INCLUDE_DIRS  := $(shell find ./include -type d)
+INCLUDE_DIRS  := $(shell find $(PROJ)/include $(PROJ)/vendor -type d)
 INCLUDE_FLAGS := $(addprefix -I,$(INCLUDE_DIRS))
 
 ifndef CFLAGS_SET
@@ -16,15 +14,9 @@ CXXFLAGS := $(CXXFLAGS) $(INCLUDE_FLAGS) -Wall -Werror -pedantic -Wextra
 CXXFLAGS_SET := t
 endif
 
-PROJ  := $(PWD)
-TESTS := $(PROJ)/tests
 
-TESTS_SRCS := $(shell find $(TESTS) -type f)
+TESTS_SRCS := $(shell find $(TESTS) -type f -name '*.c' -o -name '*.cpp')
 
-export CLANGXX
-export CLANG
-export GCCXX
-export GCC
 export PROJ
 export TESTS
 export TESTS_SRCS
@@ -68,7 +60,7 @@ realclean:
 .NOTMAIN: format
 .PHONY: format
 format:
-	find ./include ./tests -type f | grep '[.](h\|c\|cpp)$$' | xargs -I% clang-format -i --style=WebKit %
+	find ./include ./tests ./vendor -type f | xargs -I% clang-format -i --style=WebKit %
 
 .NOTMAIN: show-tests
 .PHONY: show-tests

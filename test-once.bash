@@ -20,6 +20,10 @@ pr_FAIL() {
   return 0
 }
 
+echo 'self tests'
+
+obj/test_self.cpp.t
+
 echo 'tests beginning in 0 or 5 should succeed'
 
 # run the test suites that are supposed to succeed
