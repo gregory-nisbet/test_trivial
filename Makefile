@@ -6,8 +6,8 @@ GCC     := gcc-8
 INCLUDE_DIRS  := $(shell find ./include -type d)
 INCLUDE_FLAGS := $(addprefix -I,$(INCLUDE_DIRS))
 
-CFLAGS   := $(CFLAGS) $(INCLUDE_FLAGS) -Wall -Werror -pedantic
-CXXFLAGS := $(CFLAGS) $(INCLUDE_FLAGS) -Wall -Werror -pedantic
+CFLAGS   := $(CFLAGS) $(INCLUDE_FLAGS) -Wall -Werror -pedantic -Wextra
+CXXFLAGS := $(CFLAGS) $(INCLUDE_FLAGS) -Wall -Werror -pedantic -Wextra
 
 PROJ  := $(PWD)
 TESTS := $(PROJ)/tests
