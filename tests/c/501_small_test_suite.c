@@ -3,9 +3,9 @@
 int main()
 {
     TTR_NUMTESTS(4);
-    TTR_OK_2("named ok test", true);
-    TTR_OK_1(true);
-    TTR_FALSE_2("named false test", false);
-    TTR_FALSE_1(false);
+    TTR_OK_2("named ok test", 1);
+    TTR_OK_1(1);
+    TTR_FALSE_2("named false test", 0);
+    TTR_FALSE_1(0);
     return TTR_EXIT_STATUS;
 }

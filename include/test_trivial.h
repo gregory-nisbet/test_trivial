@@ -1,5 +1,5 @@
-#ifndef TESTTRIVIAL_H_HGUARD
-#define TESTTRIVIAL_H_HGUARD
+#ifndef TEST_TRIVIAL_H_HGUARD
+#define TEST_TRIVIAL_H_HGUARD
 
 // TODO: greater consistency left vs right in cstr error names
 // TODO: check if diagfmt is NULL
@@ -11,10 +11,17 @@
 #include <cstdlib> // -- exit
 #include <cstring> // -- strcmp
 #else
-#include <stdbool.h> // might break on old C
+// specifically do not use stdbool.h
+// including stdbool or not is up to the user
 #include <stdio.h> // -- printf
 #include <stdlib.h> // -- exit
 #include <string.h> // strcmp
+#endif
+
+#ifdef __cplusplus
+#define TEST_TRIVIAL_BOOL bool
+#else
+#define TEST_TRIVIAL_BOOL int
 #endif
 
 static int ttr_current_test = -1; // invalid sentinel value
@@ -92,7 +99,7 @@ ttr_error ttr_numtests(int n)
 // specifically prevent functions that return int or something that converts to
 // char from picking up a defined function
 
-ttr_error ttr_ok_impl(const char* name, bool val, const char* diagfmt, int line)
+ttr_error ttr_ok_impl(const char* name, TEST_TRIVIAL_BOOL val, const char* diagfmt, int line)
 {
     if (ttr_current_test == -1) {
         return ttr_bad_num_tests_unset;
@@ -165,7 +172,7 @@ void ttr_handle_error(ttr_error e)
     }
 }
 
-void ttr_ok_handled(const char* n, bool val, const char* diagfmt, int line)
+void ttr_ok_handled(const char* n, TEST_TRIVIAL_BOOL val, const char* diagfmt, int line)
 {
     ttr_error e = ttr_ok_impl(n, val, diagfmt, line);
     ttr_handle_error(e);
@@ -213,4 +220,4 @@ void ttr_cstr_eq_handled(const char* name, const char* left, const char* right, 
 
 #define TTR_EXIT_STATUS ((ttr_failed_count <= 0) ? 0 : 1)
 
-#endif // TESTTRIVIAL_H_HGUARD
+#endif // TEST_TRIVIAL_H_HGUARD

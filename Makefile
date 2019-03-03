@@ -49,6 +49,12 @@ obj/Makefile : obj.mk
 clean:
 	cd obj && $(RM) *.cpp.t *.c.t
 
+.NOTMAIN: realclean
+.PHONY: realclean
+realclean:
+	find ./obj -delete ||true
+	rmdir obj ||true
+
 .NOTMAIN: format
 .PHONY: format
 format:

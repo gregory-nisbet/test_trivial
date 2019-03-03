@@ -10,7 +10,7 @@ pr() {
   env prove "$@"
 }
 
-pr_FAIL_one() {
+pr_FAIL() {
   for fil in "$@"; do
     test -f "$fil"
   done
@@ -28,7 +28,25 @@ pr obj/001_small_test_suite.cpp.t \
    obj/501_small_test_suite.c.t \
    obj/502_cstr_eq.c.t
 
-echo 'tests beginning in 1 or 6 should fail'
+echo 'tests beginning in 1 or 6 should fail at runtime'
 
 # run the tests that are supposed to fail
-pr_FAIL_one obj/101_FAIL_ok_should_be_true.cpp.t | sed 's/^/(-) /'
+echo '(-)'
+echo '(-)'
+echo '(-)'
+pr_FAIL obj/101_FAIL_ok_false.cpp.t             | sed -e 's/^/(-)   /' -e 's/\s+$//'
+echo '(-)'
+echo '(-)'
+echo '(-)'
+pr_FAIL obj/102_FAIL_ok_false_anonymous.cpp.t   | sed -e 's/^/(-)   /' -e 's/\s+$//'
+echo '(-)'
+echo '(-)'
+echo '(-)'
+pr_FAIL obj/103_FAIL_false_true.cpp.t           | sed -e 's/^/(-)   /' -e 's/\s+$//'
+echo '(-)'
+echo '(-)'
+echo '(-)'
+pr_FAIL obj/104_FAIL_false_true_anonymous.cpp.t | sed -e 's/^/(-)   /' -e 's/\s+$//'
+echo '(-)'
+echo '(-)'
+echo '(-)'
