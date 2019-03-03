@@ -14,13 +14,13 @@ int main() {
 }
 ```
 
-The public interface of this module consists of the macros beginning with `TTR_`.
-All function-like macros except for `TTR_NUMTESTS` have their arity as a suffix.
-Prior to C99, C did not have a distinct primitive boolean type. The type reported
+- The public interface of this module consists of the macros beginning with `TTR_`.
+- All function-like macros except for `TTR_NUMTESTS` have their arity as a suffix.
+- Prior to C99, C did not have a distinct primitive boolean type. The type reported
 in the documentation as `bool` is `typedef`d to `int` when compiling the library
 as C. `bool` is really `bool` when compiling as C++ so that `operator bool` is selected.
-`cstr!` refers to a pointer to a null-terminated string that cannot be a null pointer.
-`cstr?` refers to a pointer to a null-terminated string that CAN be a null pointer.
+- `cstr!` refers to a pointer to a null-terminated string that cannot be a null pointer.
+- `cstr?` refers to a pointer to a null-terminated string that CAN be a null pointer.
 
 The names and "types" of the macros are described below.
 
@@ -29,7 +29,7 @@ The names and "types" of the macros are described below.
 begin a new test suite by declaring the number of tests to execute. It is similar to the following Perl fragment.
 
 ```
-use Test::More tests => 47
+use Test::More tests => 47;
 ```
 
 `TTR_EXIT_STATUS : integer`
