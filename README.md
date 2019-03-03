@@ -24,7 +24,7 @@ as C. `bool` is really `bool` when compiling as C++ so that `operator bool` is s
 
 The names and "types" of the macros are described below.
 
-# `TTR_NUMTESTS : integer -> void`
+### `TTR_NUMTESTS : integer -> void`
 
 begin a new test suite by declaring the number of tests to execute. It is similar to the following Perl fragment.
 
