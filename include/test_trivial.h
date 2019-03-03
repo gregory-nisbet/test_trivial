@@ -24,6 +24,14 @@
 #define TEST_TRIVIAL_BOOL int
 #endif
 
+#define TEST_TRIVIAL_EMPTY /*NOTHING*/
+
+#ifdef __cplusplus
+#define TEST_TRIVIAL_CONSTEXPR_FUNC constexpr
+#else
+#define TEST_TRIVIAL_CONSTEXPR_FUNC TEST_TRIVIAL_EMPTY
+#endif
+
 static int ttr_current_test = -1; // invalid sentinel value
 static int ttr_failed_count = 0; // number of failed tests is initially zero.
 
