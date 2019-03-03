@@ -161,6 +161,7 @@ static inline void ttr_handle_error(ttr_error e)
 {
     switch (e) {
     case ttr_good_ok:
+        ttr_passed_count += 1;
         break;
     case ttr_good_NOT_ok:
         ttr_failed_count += 1;
