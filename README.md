@@ -14,7 +14,7 @@ int main() {
 }
 ```
 
-The public interface of this module consists of the macros beginning with `TTR\_`.
+The public interface of this module consists of the macros beginning with `TTR_`.
 All function-like macros except for `TTR_NUMTESTS` have their arity as a suffix.
 Prior to C99, C did not have a distinct primitive boolean type. The type reported
 in the documentation as `bool` is `typedef`d to `int` when compiling the library
