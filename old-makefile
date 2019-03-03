@@ -22,6 +22,8 @@ RUNNABLE_TESTS :=
 .for test in ${TESTS_SRCS_CXX}
 OUT := ${test:R:=.t}
 # if you replace this with += you get a bug. wowzers
+# actually that isn't a bug. Inside a for loop, lines that do not involve the loop variable are not
+# expanded on every loop iteration.
 # RUNNABLE_TESTS += ${OUT}
 RUNNABLE_TESTS := ${RUNNABLE_TESTS} ${OUT}
 # .info ${RUNNABLE_TESTS}
