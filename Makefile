@@ -34,10 +34,11 @@ build-tests: $(TESTS_SRCS) obj/Makefile
 .NOTMAIN: test-once
 .PHONY: test-once
 test-once: build-tests
-	bash test.bash
+	bash test-once.bash
 
 .PHONY: test
-test: test-once
+test:
+	bash test.bash
 
 .NOTMAIN: obj/Makefile
 obj/Makefile : obj.mk
