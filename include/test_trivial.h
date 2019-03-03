@@ -34,6 +34,7 @@
 
 static int ttr_current_test = -1; // invalid sentinel value
 static int ttr_failed_count = 0; // number of failed tests is initially zero.
+static int ttr_passed_count = 0; // number of passing tests is initially zero
 
 enum ttr_error {
     // results beginning with good_
@@ -91,7 +92,7 @@ const char* ttr_pretty_error(ttr_error e)
     return "";
 }
 
-ttr_error ttr_numtests(int n)
+static inline ttr_error ttr_numtests(int n)
 {
     if (n == 0) {
         return ttr_bad_zero_tests;
@@ -107,7 +108,7 @@ ttr_error ttr_numtests(int n)
 // specifically prevent functions that return int or something that converts to
 // char from picking up a defined function
 
-ttr_error ttr_ok_impl(const char* name, TEST_TRIVIAL_BOOL val, const char* diagfmt, int line)
+static inline ttr_error ttr_ok_impl(const char* name, TEST_TRIVIAL_BOOL val, const char* diagfmt, int line)
 {
     if (ttr_current_test == -1) {
         return ttr_bad_num_tests_unset;
@@ -129,7 +130,7 @@ ttr_error ttr_ok_impl(const char* name, TEST_TRIVIAL_BOOL val, const char* diagf
 }
 
 // compare two c strings for equality
-ttr_error ttr_cstr_eq_impl(const char* name, const char* left, const char* right, const char* diagfmt, int line)
+static inline ttr_error ttr_cstr_eq_impl(const char* name, const char* left, const char* right, const char* diagfmt, int line)
 {
     if (ttr_current_test == -1) {
         return ttr_bad_num_tests_unset;
@@ -156,7 +157,7 @@ ttr_error ttr_cstr_eq_impl(const char* name, const char* left, const char* right
     }
 }
 
-void ttr_handle_error(ttr_error e)
+static inline void ttr_handle_error(ttr_error e)
 {
     switch (e) {
     case ttr_good_ok:
@@ -180,13 +181,13 @@ void ttr_handle_error(ttr_error e)
     }
 }
 
-void ttr_ok_handled(const char* n, TEST_TRIVIAL_BOOL val, const char* diagfmt, int line)
+static inline void ttr_ok_handled(const char* n, TEST_TRIVIAL_BOOL val, const char* diagfmt, int line)
 {
     ttr_error e = ttr_ok_impl(n, val, diagfmt, line);
     ttr_handle_error(e);
 }
 
-void ttr_cstr_eq_handled(const char* name, const char* left, const char* right, const char* diagfmt, int line)
+static inline void ttr_cstr_eq_handled(const char* name, const char* left, const char* right, const char* diagfmt, int line)
 {
     ttr_error e = ttr_cstr_eq_impl(name, left, right, diagfmt, line);
     ttr_handle_error(e);
@@ -226,6 +227,7 @@ void ttr_cstr_eq_handled(const char* name, const char* left, const char* right, 
                   "0",                            \
         left, right)
 
-#define TTR_EXIT_STATUS ((ttr_failed_count <= 0) ? 0 : 1)
+#define TTR_EXIT_STATUS \
+    ((ttr_failed_count <= 0) ? (ttr_passed_count == ttr_current_test ? 0 : 1) : 1)
 
 #endif // TEST_TRIVIAL_H_HGUARD
