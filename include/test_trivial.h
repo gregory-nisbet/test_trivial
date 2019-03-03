@@ -61,7 +61,7 @@ enum ttr_error {
 };
 typedef enum ttr_error ttr_error;
 
-const char* ttr_pretty_error(ttr_error e)
+static inline const char* ttr_pretty_error(ttr_error e)
 {
     switch (e) {
     case ttr_good_ok:
