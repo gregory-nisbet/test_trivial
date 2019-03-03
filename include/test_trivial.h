@@ -39,7 +39,7 @@ static int ttr_passed_count = 0; // number of passing tests is initially zero
 enum ttr_error {
     // results beginning with good_
     // mean that the test case itself was successful
-    ttr_good_ok = 0,
+    ttr_good_ok = 0, // also used when an internal routine succeeds
     ttr_good_NOT_ok = 1, // internal capitalization for legibility
     // results beginning with bad_
     // mean that the user misused the test suite API
@@ -57,7 +57,12 @@ enum ttr_error {
     // it's a different sort of condition
     ttr_precond_null_left_cstr = 4001,
     ttr_precond_null_right_cstr = 4002,
-    ttr_precond_null_both_cstrs = 4003
+    ttr_precond_null_both_cstrs = 4003,
+    // interesting conditions that are not errors and are not
+    // precondition violations
+    ttr_condition_equal_cstrs = 5001,
+    ttr_condition_left_is_prefix = 5002,
+    ttr_condition_right_is_prefix = 5003
 };
 typedef enum ttr_error ttr_error;
 
@@ -86,6 +91,12 @@ static inline const char* ttr_pretty_error(ttr_error e)
         return "BROKEN PRECONDITION -- right cstr is a null pointer";
     case ttr_precond_null_both_cstrs:
         return "BROKEN PRECONDITION -- both cstrs are null pointers";
+    case ttr_condition_equal_cstrs:
+        return "CONDITION -- both cstrs are equal";
+    case ttr_condition_left_is_prefix:
+        return "CONDITION -- left cstr is prefix of right cstr";
+    case ttr_condition_right_is_prefix:
+        return "CONDITION -- right cstr is prefix of left cstr";
     }
     // unreachable
     abort();
@@ -127,6 +138,63 @@ static inline ttr_error ttr_ok_impl(const char* name, TEST_TRIVIAL_BOOL val, con
         printf(diagfmt, line);
         return ttr_good_NOT_ok;
     }
+}
+
+
+// TODO: optimization when both strings point at the same thing
+// I don't think it's correct to skip the check entirely because then that could mask problems
+// if left and right are not actually C strings
+static inline ttr_error ttr_first_diff_idx(int* idx, const char* left, const char* right)
+{
+    if (left == NULL && right == NULL) {
+        return ttr_precond_null_both_cstrs;
+    } else if (left == NULL) {
+        return ttr_precond_null_left_cstr;
+    } else if (right == NULL) {
+        return ttr_precond_null_right_cstr;
+    }
+    // run through the strings in tandem until
+    // we find two characters that differ or hit a null character
+    int i = 0;
+    while (*left && *right) {
+        if (*left != *right) {
+            if (idx) {
+                *idx = i;
+            }
+            return ttr_good_ok;
+        }
+        left++;
+        right++;
+    }
+    // if both the characters are null, there is no index where
+    // they differ, so we set idx to -1
+    // we also return a "condition" status code to show that an abnormal path
+    // that isn't an error or a precondition violation has occurred
+    if ((*left == '\0') && (*right == '\0')) {
+        if (idx) {
+            *idx = -1;
+        }
+        return ttr_condition_equal_cstrs;
+    }
+    // otherwise, we found a character where they differ, because
+    // one string has ended
+    if (idx) {
+        *idx = i;
+    }
+    // if the left pointer is currently over a null, then
+    // left is a prefix of right
+    if (*left == '\0') {
+        return ttr_condition_left_is_prefix;
+    }
+    // if right is currently over a null, right is a prefix of left
+    if (*right == '\0') {
+        return ttr_condition_left_is_prefix;
+    }
+    // otherwise we are in the expected case, left and right are both non-null
+    if (*left != '\0' && *right != '\0') {
+        return ttr_good_ok;
+    }
+    abort();
 }
 
 // compare two c strings for equality
@@ -177,6 +245,12 @@ static inline void ttr_handle_error(ttr_error e)
     case ttr_precond_null_both_cstrs:
     case ttr_bad_test_name_null:
         fprintf(stderr, "FATAL ERROR %d (%s)\n", e, ttr_pretty_error(e));
+        exit(2);
+        break;
+    case ttr_condition_equal_cstrs:
+    case ttr_condition_left_is_prefix:
+    case ttr_condition_right_is_prefix:
+        fprintf(stderr, "UNEXPECTED INTERNAL CONDITION %d (%s)\n", e, ttr_pretty_error(e));
         exit(2);
         break;
     }
